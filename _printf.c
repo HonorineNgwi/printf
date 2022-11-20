@@ -1,41 +1,47 @@
-#include <stdarg.h>
-#include <unistd.h>
-#include <stddef.h>
-#include <stdio.h>
 #include "main.h"
 
 /***
  * _printf - produces output according to a format
  * @format: character string
  * @...: variadic parameter
- * Return: number of characters printed
+ * Return: b_len
  */
 
 int _printf(const char *format, ...)
 {
-	int i = 0;
-	int count = 0;
-	int value = 0;
 
-	if (format == NULL)
+	int (*pfunc)(va_list, flags_t *);
+	const char *p;
+	va_list arguments;
+	flags_t flags = {0, 0, 0};
+
+	register int count = 0;
+
+	va_start(arguments, format);
+	if (!format || (format[0] == '%' && !format[1]))
 		return (-1);
-
-	while (format[i])
+	if (format[0] == '%' && format[1] == ' ' && !format[2])
+		return (-1);
+	for (p = format; *p; p++)
 	{
-		if (format[i] != '%')
+		if (*p == '%')
 		{
-		value = write(1, &format[i], 1);
-		count = count + value;
-		i++;
-		continue;
-		}
-	
-		if (format[i] == '%')
-		{
-			printf("I have encountered a percent\n");
-			break;
-		}
+			p++;
+			if (*p == '%')
+			{
+				count += _putchar('%');
+				continue;
+			}
+			while (get_flag(*p, &flags))
+				p++;
+			pfunc = get_print(*p);
+			count += (pfunc)
+				? pfunc(arguments, &flags)
+				: _printf("%%%c", *p);
+		} else
+			count += _putchar(*p);
 	}
-	return(count);
+	_putchar(-1);
+	va_end(arguments);
+	return (count);
 }
-
