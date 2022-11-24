@@ -48,7 +48,7 @@
  *
  *     * @fn: The function associated.
  *
- *      */
+ */
 
 struct fmt
 
@@ -74,7 +74,7 @@ struct fmt
  *
  *     * @fm_t: The function associated.
  *
- *      */
+ */
 
 typedef struct fmt fmt_t;
 
